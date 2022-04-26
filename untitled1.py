@@ -29,8 +29,12 @@ class Jugador():
         for i in cartasmesa:
             suma15 += (mesa[i])[0]
         if suma15 == 15:
-            for i in cartasmesa:    
+            n = []
+            for i in cartasmesa:
                 self.cartas.append(mesa[i])
+                n.append(i)
+            n_sorted = sorted(n,reverse=True)
+            for i in n_sorted:
                 mesa.pop(i)
             if len(mesa) == 0:
                 self.escobas += 1
@@ -156,7 +160,7 @@ def player(side, conn, game):
                 elif command[0]=="-":
                     n = int(command[1])
                     carta = 0
-                    carta = game.jugadores[side].get_cartas[carta]
+                    carta = game.jugadores[side].get_cartas[n]
                     game.jugadores[side].jugar_descartar(carta,game.mesa,game.baraja,game.mutex)
                     
                 else:
