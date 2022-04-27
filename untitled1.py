@@ -86,13 +86,7 @@ class Game():
         self.mutex.release()
     def ultima_baza(self, jugador): #Las cartas que quedan al final de la partida en la mesa se las lleva el jugador que hizo la última baza
         self.cartas += self.mesa
-    
-    def turno_neutral(self):
-        self.turno.value = -1
-    
-    def cambiar_turno(self):
-        self.turno.value = ((self.turno.value+1)%2)
-    
+
     def turno(self,jugador):
         return(self.turno.value==jugador)
         
@@ -144,7 +138,8 @@ class Game():
             'mano player1': self.jugadores[0].get_hand(),
             'mano player2': self.jugadores[1].get_hand(),
             'mesa': self.mesa,
-            'is_running': self.running.value == 1
+            'is_running': self.running.value == 1,
+            'score': [self.jugadores[0].puntos,self.jugadores[1].puntos]
             }
         return(info)
 
