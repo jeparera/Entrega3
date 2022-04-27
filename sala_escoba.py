@@ -182,7 +182,7 @@ def main(ip_address):
     baraja = manager.list(list(itertools.product([1,2,3,4,5,6,7,8,9,10],['Espadas','Oros','Copas','Bastos']))) #Cambie los valores para que vayan de 0 a 10 para que las cartas sean mas faciles de manejar
     random.shuffle(baraja)
     try:
-        with Listener((ip_address, 6000),
+        with Listener((ip_address, 6321),
                       authkey=b'secret password') as listener:
             n_player = 0
             players = [None, None]
