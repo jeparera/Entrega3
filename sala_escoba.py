@@ -86,13 +86,7 @@ class Game():
         self.mutex.release()
     def ultima_baza(self, jugador): #Las cartas que quedan al final de la partida en la mesa se las lleva el jugador que hizo la última baza
         self.cartas += self.mesa
-    
-    def turno_neutral(self):
-        self.turno.value = -1
-    
-    def cambiar_turno(self):
-        self.turno.value = ((self.turno.value+1)%2)
-    
+
     def turno(self,jugador):
         return(self.turno.value==jugador)
         
@@ -144,12 +138,13 @@ class Game():
             'mano player1': self.jugadores[0].get_hand(),
             'mano player2': self.jugadores[1].get_hand(),
             'mesa': self.mesa,
-            'is_running': self.running.value == 1
+            'is_running': self.running.value == 1,
+            'score': [self.jugadores[0].puntos,self.jugadores[1].puntos]
             }
         return(info)
     
     def is_running(self):
-        return self.running.value == 1
+        return self.running == 1
 
 def player(side, conn, game):
     try:
@@ -187,7 +182,7 @@ def main(ip_address):
     baraja = manager.list(list(itertools.product([1,2,3,4,5,6,7,8,9,10],['Espadas','Oros','Copas','Bastos']))) #Cambie los valores para que vayan de 0 a 10 para que las cartas sean mas faciles de manejar
     random.shuffle(baraja)
     try:
-        with Listener((ip_address, 6320),
+        with Listener((ip_address, 6000),
                       authkey=b'secret password') as listener:
             n_player = 0
             players = [None, None]
