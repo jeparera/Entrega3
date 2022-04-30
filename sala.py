@@ -154,12 +154,21 @@ class Game():
             return("empate")
     def stop(self):
         self.running.value = 0
-    def get_mesa()999999999999999
+    def get_mesa(self):
+        l = []
+        for i in self.mesa:
+            l.append(i)
+        return(l)
+    def manos_(self):
+        l = []
+        for i in range(2):
+            l.append(self.jugadores[i].get_hand())
+        return(l)
     def get_info(self):
         info = {
-            'mano player1': self.jugadores[0].get_hand(),
-            'mano player2': self.jugadores[1].get_hand(),
-            'mesa': self.mesa[:],
+            'mano player1': self.manos_[0],
+            'mano player2': self.manos_[1],
+            'mesa': self.get_mesa(),
             'is_running': self.running.value == 1
             }
         return info
