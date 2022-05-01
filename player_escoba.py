@@ -131,8 +131,6 @@ class Nombres_cartas_mesa(pygame.sprite.Sprite):#Esto escribe los nombres en las
                 self.contador += self.contador
             self.contador = 0
             self.set_mesa()
-    def __str__(self):
-        return f"S<{self.player}>"
 
 class Display():
     def __init__(self, game):
