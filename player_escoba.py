@@ -87,56 +87,9 @@ class cartas(pygame.sprite.Sprite):#La forma de las cartas siempre es la misma c
         pygame.draw.rect(self.surface,WHITE,[0,320,50,90])
         pygame.draw.rect(self.surface,WHITE,[0,200,50,90])
         
-class Nombres_cartas_jugadores(pygame.sprite.Sprite):#Esto escribe los nombres en las cartas.
-    def __init__(self, player):
-        super().__init__()
-        self.surface = pygame.Surface([700,525])
-        self.player = player
-        self.n = 0
-        pygame.font.init()
-        self.fuente = pygame.font.Font(None,20)
-        self.texto = ""
-        self.render = self.fuente.render(self.texto,0,RED)
-        self.contador = 0
-    def set_mano(self):
-        for i in self.player.mano:
-            self.texto = str(i)
-            if self.player.side == 0:
-                self.surface.blit(self.render,460,210+self.contador*60)
-                self.contador += self.contador
-            else:
-                self.surface.blit(self.render,40,210+self.contador*60)
-                self.contador += self.contador
-            self.contador = 0
-            self.set_mano()
-class Nombres_cartas_mesa(pygame.sprite.Sprite):#Esto escribe los nombres en las cartas.
-    def __init__(self, mesa):
-        super().__init__()
-        self.surface = pygame.Surface([700,525])
-        self.mesa = mesa
-        pygame.font.init()
-        self.fuente = pygame.font.Font(None,20)
-        self.texto = ""
-        self.render = self.fuente.render(self.texto,0,RED)
-        self.contador = 0
-
-    def set_mesa(self):
-        for i in self.player.mano:
-            self.texto = str(i)
-            if self.contador < 3:
-                self.surface.blit(self.render,125,310+self.contador*50)
-                self.contador += self.contador
-            else:
-                self.surface.blit(self.render,225,310+((self.contador)%2)*50)
-                self.contador += self.contador
-            self.contador = 0
-            self.set_mesa()
-
 class Display():
     def __init__(self, game):
         self.game = game
-        self.manos = [Nombres_cartas_jugadores(self.game.get_player(i)) for i in range(2)]
-        self.mesa = Nombres_cartas_mesa(self.game.get_mesa)
         self.all_sprites = pygame.sprite.Group()
         self.paddle_group = pygame.sprite.Group()
         for mano  in self.manos:
@@ -146,7 +99,7 @@ class Display():
 
         self.screen = pygame.display.set_mode(SIZE)
         self.clock =  pygame.time.Clock()  #FPS
-        self.background = pygame.image.load('background.png')
+        self.background = pygame.image.load('background.jpeg')
         pygame.init()
 
     def analyze_events(self, side):
@@ -199,12 +152,21 @@ class Display():
     def refresh(self):
         self.all_sprites.update()
         self.screen.blit(self.background, (0, 0))
-        score = self.game.get_score()
-        font = pygame.font.Font(None, 74)
-        text = font.render(f"{score[UP_PLAYER]}", 1, WHITE)
-        self.screen.blit(text, (250, 30))
-        text = font.render(f"{score[DOWN_PLAYER]}", 1, WHITE)
-        self.all_sprites.draw(self.screen)
+        font = pygame.font.Font(None, 20)
+        for i in range(3):
+            text = font.render(str(self.game.player[0].mano[i]),1,RED)
+            self.screen.blit(text,460,210+i*60)
+        for i in range(3):
+            text = font.render(str(self.game.player[1].mano[i]),1,RED)
+            self.screen.blit(text,40,210+i*60)
+        text = font.render(str(self.game.mesa[0]),1,RED)
+        self.screen.blit(text,225,310)
+        text = font.render(str(self.game.mesa[1]),1,RED)
+        self.screen.blit(text,225,410)
+        text = font.render(str(self.game.mesa[2]),1,RED)
+        self.screen.blit(text,125,310)
+        text = font.render(str(self.game.mesa[3]),1,RED)
+        self.screen.blit(text,125,410)
         pygame.display.flip()
 
     def tick(self):
@@ -225,10 +187,10 @@ def main(ip_address,port):
             display = Display(game)
             while game.is_running():
                 events = display.analyze_events(side)
+                if events[len(events)-1] != "fin jugada":
+                        events += display.analyze_events(side)
                 print(events)
                 for ev in events:
-                    if events[len(events)-1] != "fin jugada":
-                        events += display.analyze_events(side)
                     conn.send(ev)
                     if ev == 'quit':
                         game.stop()
