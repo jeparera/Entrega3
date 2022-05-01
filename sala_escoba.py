@@ -190,6 +190,7 @@ class Game():
 
 def player(side, conn, game):
     try:
+        game.jugadores[side].robar(3,game.baraja,game.mutex)
         print(f"starting player {SIDESSTR[side]}:{game.get_info()}")
         conn.send( (side, game.get_info()) )
         while game.is_running():
@@ -251,8 +252,6 @@ def main(ip_address,port):
             n_player = 0
             players = [None, None]
             game = Game(manager, baraja)
-            game.jugadores[0].robar(3,game.baraja,game.mutex)
-            game.jugadores[1].robar(3,game.baraja,game.mutex)
             game.reponer_mesa()
             while True:
                 print(f"accepting connection {n_player}")
