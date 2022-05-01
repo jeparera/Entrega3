@@ -29,6 +29,8 @@ class Player():
         self.side = side
         self.pos = [None, None]
         self.puntos = 0
+        self.mano = []
+        
     def get_hand(self):
         return self.mano
  
@@ -56,9 +58,10 @@ class Game():
 
 
     def update(self, gameinfo):
-        self.set_score(gameinfo['score'])
         self.running = gameinfo['is_running']
         self.mesa = gameinfo['mesa']
+        self.players[0].mano = gameinfo['mano_player1']
+        self.players[1].mano = gameinfo['mano_player2']
 
     def is_running(self):
         return self.running
@@ -151,10 +154,47 @@ class Display():
     def analyze_events(self, side):
         events = []
         for event in pygame.event.get():
-            if event.type != pygame.QUIT:
-                events.append(event.type)
-            elif event.type == pygame.QUIT:
+            if event.type == pygame.QUIT:
                 events.append("quit")
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    events.append("quit")
+                elif event.key == pygame.K_KP_MINUS:
+                    events.append("descartar")
+                elif event.key == pygame.K_KP_PLUS:
+                    events.append("recoger")
+                elif event.key == pygame.K_KP_DIVIDE:
+                    events.append("mesa")
+                elif event.key == pygame.K_KP0:
+                    events.append(10)
+                elif event.key == pygame.K_KP1:
+                    events.append(1)
+                elif event.key == pygame.K_KP2:
+                    events.append(2)
+                elif event.key == pygame.K_KP3:
+                    events.append(3)
+                elif event.key == pygame.K_KP4:
+                    events.append(4)
+                elif event.key == pygame.K_KP5:
+                    events.append(5)
+                elif event.key == pygame.K_KP6:
+                    events.append(6)
+                elif event.key == pygame.K_KP7:
+                    events.append(7)
+                elif event.key == pygame.K_KP8:
+                    events.append(8)
+                elif event.key == pygame.K_KP9:
+                    events.append(9)
+                elif event.key == pygame.K_e:
+                    events.append("Espadas")
+                elif event.key == pygame.K_o:
+                    events.append("Oros")
+                elif event.key == pygame.K_c:
+                    events.append("Copas")
+                elif event.key == pygame.K_b:
+                    events.append("Bastos")
+                elif event.key == pygame.K_f:
+                    event.append("fin jugada")
         return events
 
 
@@ -187,7 +227,10 @@ def main(ip_address,port):
             display = Display(game)
             while game.is_running():
                 events = display.analyze_events(side)
+                print(events)
                 for ev in events:
+                    if events[len(events)-1] != "fin jugada":
+                        events += display.analyze_events(side)
                     conn.send(ev)
                     if ev == 'quit':
                         game.stop()
