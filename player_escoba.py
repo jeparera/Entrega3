@@ -92,11 +92,6 @@ class Display():
         self.game = game
         self.all_sprites = pygame.sprite.Group()
         self.paddle_group = pygame.sprite.Group()
-        for mano  in self.manos:
-            self.all_sprites.add(mano)
-            self.paddle_group.add(mano)
-        self.all_sprites.add(self.mesa)
-
         self.screen = pygame.display.set_mode(SIZE)
         self.clock =  pygame.time.Clock()  #FPS
         self.background = pygame.image.load('background.jpeg')
