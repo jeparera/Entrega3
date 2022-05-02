@@ -207,45 +207,48 @@ def player(side, conn, game):
             command = ""
             while command != "next":
                 commands = conn.recv()
-                for command in commands:
-                    recoger = 0
-                    print(command)
-                    if command == "quit":
+                k = 0
+                while k < len(commands):
+                    if commands[k] == "quit":
                         game.stop()
-                    elif command == "ultima baza":
+                    elif commands[k] == "ultima baza":
                         game.ultima_baza(side)
                         game.stop()
-                    elif command == "robar":
+                    elif commands[k] == "robar":
                         game.robar(1,side)
-                    elif command =="descartar":
-                        commandAUX = ""
-                        while commandAUX != "fin jugada":
-                            commandAUX = conn.recv()
-                            if type(commandAUX) == int:
-                                numero = commandAUX
-                            elif commandAUX == "Espadas" or commandAUX == "Oros" or commandAUX == "Copas" or commandAUX == "Bastos":
-                                palo = commandAUX
+                    elif commands[k] =="descartar":
+                        k += 1
+                        while commands[k] != "fin jugada":
+                            if type(commands[k]) == int:
+                                numero = commands[k]
+                                k += 1
+                            elif commands[k] == "Espadas" or commands[k] == "Oros" or commands[k] == "Copas" or commands[k] == "Bastos":
+                                palo = commands[k]
+                                k += 1
                         carta = (numero,palo)
                         game.jugar_descartar(carta,side)
-                    elif command =="recoger":
-                        commandAUX = ""
-                        while commandAUX != "mesa":
-                            print (commandAUX)
-                            if type(commandAUX) == int:
-                                numero_mano = commandAUX
-                            elif commandAUX == "Espadas" or commandAUX == "Oros" or commandAUX == "Copas" or commandAUX == "Bastos":
-                                palo_mano = commandAUX
+                    elif commands[k] =="recoger":
+                        k += 1
+                        while commands[k] != "mesa":
+                            print (commands[k])
+                            if type(commands[k]) == int:
+                                numero_mano = commands[k]
+                                k += 1
+                            elif commands[k] == "Espadas" or commands[k] == "Oros" or commands[k] == "Copas" or commands[k] == "Bastos":
+                                palo_mano = commands[k]
+                                k += 1
                         cartamano = (numero_mano,palo_mano)
                         print(cartamano)
                         cartasmesa = []
                         numero_mesa = 12 #No en {0,...,10}
                         palo_mesa = "" #No un palo
-                        while commandAUX != "fin jugada":
-                            commandAUX = conn.recv()
-                            if type(commandAUX) == int:
-                                numero_mesa = commandAUX
-                            elif commandAUX == "Espadas" or commandAUX == "Oros" or commandAUX == "Copas" or commandAUX == "Bastos":
-                                palo_mesa = commandAUX
+                        while commands[k] != "fin jugada":
+                            if type(commands[k]) == int:
+                                numero_mesa = commands[k]
+                                k += 1
+                            elif commands[k] == "Espadas" or commands[k] == "Oros" or commands[k] == "Copas" or commands[k] == "Bastos":
+                                palo_mesa = commands[k]
+                                k += 1
                             carta_mesa = [numero_mesa,palo_mesa]
                             if numero_mesa != 12 and palo_mesa != "":
                                 cartasmesa += [carta_mesa]
