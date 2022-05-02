@@ -13,8 +13,8 @@ X = 0
 Y = 1
 SIZE = (700, 525)
 
-UP_PLAYER = 0
-DOWN_PLAYER = 1
+LEFT_PLAYER = 0
+RIGHT_PLAYER = 1
 PLAYER_COLOR = [GREEN, YELLOW]
 PLAYER_HEIGHT = 0
 PLAYER_WIDTH = 0
@@ -68,8 +68,6 @@ class Game():
         self.mesa = gameinfo['mesa']
         self.players[0].mano = gameinfo['mano_player1']
         self.players[1].mano = gameinfo['mano_player2']
-        self.players[0].cartas = gameinfo['cartas_player1']
-        self.players[1].cartas = gameinfo['cartas_player2']
 
     def is_running(self):
         return self.running
@@ -78,7 +76,7 @@ class Game():
         self.running = False
 
     def __str__(self):
-        return f"G<{self.players[UP_PLAYER]}:{self.players[DOWN_PLAYER]}:{self.ball}>"
+        return f"G<{self.players[LEFT_PLAYER]}:{self.players[RIGHT_PLAYER]}:{self.ball}>"
         
 class Display():
     def __init__(self, game):
@@ -130,10 +128,12 @@ class Display():
                     events.append("Copas")
                 elif event.key == pygame.K_b:
                     events.append("Bastos")
-                elif event.key == pygame.K_f:
+                elif event.key == pygame.K_KP_ENTER:
                     events.append("fin jugada")
                 elif event.key == pygame.K_u:
                     events.append("ultima baza")
+                elif event.key == pygame.K_LEFT:
+                    events.append("cancelar")
                 elif event.key == pygame.K_r:
                     events.append("robar")
         return events
@@ -157,16 +157,16 @@ class Display():
         for i in range(len(mesa)):
             if i%2==0:
                 text = font.render(str(mesa[i]),1,RED)
-                self.screen.blit(text,(270+(i)*50,250))
+                self.screen.blit(text,(255+(i)*50,250))
             else:
                 text = font.render(str(mesa[i]),1,RED)
-                self.screen.blit(text,(270+(i-1)*50,310))
+                self.screen.blit(text,(255+(i-1)*50,310))
         for i in range(len(manoizq)):
             text = font.render(str(manoizq[i]),1,RED)
-            self.screen.blit(text,(620,220+i*60))
+            self.screen.blit(text,(605,220+i*60))
         for i in range(len(manoder)):
             text = font.render(str(manoder[i]),1,RED)
-            self.screen.blit(text,(30,220+i*60))
+            self.screen.blit(text,(15,220+i*60))
         pygame.display.flip()
 
     def tick(self):
@@ -188,18 +188,40 @@ def main(ip_address,port):
             display.tick()
             while game.is_running():
                 events = display.analyze_events(side)
-                while len(events) == 0:
+                while len(events)==0:
+                    conn.send('next')
+                    gameinfo = conn.recv()
+                    game.update(gameinfo)
+                    display.refresh()
+                    display.tick()
                     events = display.analyze_events(side)
                 if len(events) > 0:
-                    while events[-1] != "fin jugada":
+                    while events[-1]!="fin jugada" or events == []:  
+                        conn.send('next')
+                        gameinfo = conn.recv()
+                        game.update(gameinfo)
+                        display.refresh()
+                        display.tick()
                         new = display.analyze_events(side)
-                        if new != []:
+                        if new ==["cancelar"]:
+                            events = []
+                            while events == []:
+                                conn.send('next')
+                                gameinfo = conn.recv()
+                                game.update(gameinfo)
+                                display.refresh()
+                                display.tick()
+                                events = display.analyze_events(side)
+                            print('2')
+                        elif new != []:
+                            print('3')
                             events += new
                             print(events)
+                    print('si')    
                 conn.send(events)
                 for ev in events:
                     if ev == 'quit':
-                        game.stop()
+                            game.stop()
                 gameinfo = conn.recv()
                 game.update(gameinfo)
                 display.refresh()
