@@ -76,31 +76,13 @@ class Game():
 
     def __str__(self):
         return f"G<{self.players[UP_PLAYER]}:{self.players[DOWN_PLAYER]}:{self.ball}>"
-
-class cartas(pygame.sprite.Sprite):#La forma de las cartas siempre es la misma cambia las letras.
-    def _init_(self):
-        self.surface = pygame.surface([700,525])
-        self.surface.fill(BLACK)
-        pygame.draw.rect(self.surface,WHITE,[500,200,50,90])
-        pygame.draw.rect(self.surface,WHITE,[500,260,50,90])
-        pygame.draw.rect(self.surface,WHITE,[500,320,50,90])
-        pygame.draw.rect(self.surface,WHITE,[165,300,50,90])
-        pygame.draw.rect(self.surface,WHITE,[165,350,50,90])
-        pygame.draw.rect(self.surface,WHITE,[265,300,50,90])
-        pygame.draw.rect(self.surface,WHITE,[265,350,50,90])
-        pygame.draw.rect(self.surface,WHITE,[0,260,50,90])
-        pygame.draw.rect(self.surface,WHITE,[0,320,50,90])
-        pygame.draw.rect(self.surface,WHITE,[0,200,50,90])
         
 class Display():
     def __init__(self, game):
         self.game = game
-        self.cartas = cartas
-        self.all_sprites = pygame.sprite.Group()
-        self.all_sprites.add(self.cartas)
         self.screen = pygame.display.set_mode(SIZE)
         self.clock =  pygame.time.Clock()  #FPS
-        self.background = pygame.image.load('background.jpg')
+        self.background = pygame.image.load('background.jpeg')
         pygame.init()
 
     def analyze_events(self, side):
@@ -154,26 +136,34 @@ class Display():
         return events
 
     def refresh(self):
-        self.all_sprites.update()
         self.screen.blit(self.background, (0, 0))
-        mano0 = self.game.players[0].get_hand() 
-        mano1 = self.game.players[1].get_hand()
+        manoder = self.game.players[0].get_hand() 
+        manoizq = self.game.players[1].get_hand()
         mesa = self.game.get_mesa()
         font = pygame.font.Font(None, 20)
-        for i in range(len(mano0)):
-            text = font.render(str(mano0[i]),1,RED)
-            self.screen.blit(text,(460,210+i*60))
-        for i in range(len(mano1)):
-            text = font.render(str(mano1[i]),1,RED)
-            self.screen.blit(text,(40,210+i*60))
-        text = font.render(str(mesa[0]),1,RED)
-        self.screen.blit(text,(225,310))
-        text = font.render(str(mesa[1]),1,RED)
-        self.screen.blit(text,(225,410))
-        text = font.render(str(mesa[2]),1,RED)
-        self.screen.blit(text,(125,310))
-        text = font.render(str(mesa[3]),1,RED)
-        self.screen.blit(text,(125,410))
+        pygame.draw.rect(self.screen,WHITE,[600,200,90,50])
+        pygame.draw.rect(self.screen,WHITE,[600,260,90,50])
+        pygame.draw.rect(self.screen,WHITE,[600,320,90,50])
+        pygame.draw.rect(self.screen,WHITE,[250,230,90,50])
+        pygame.draw.rect(self.screen,WHITE,[250,290,90,50])
+        pygame.draw.rect(self.screen,WHITE,[350,230,90,50])
+        pygame.draw.rect(self.screen,WHITE,[350,290,90,50])
+        pygame.draw.rect(self.screen,WHITE,[10,260,90,50])
+        pygame.draw.rect(self.screen,WHITE,[10,320,90,50])
+        pygame.draw.rect(self.screen,WHITE,[10,200,90,50])
+        for i in range(len(mesa)):
+            if i%2==0:
+                text = font.render(str(mesa[i]),1,RED)
+                surface.blit(text,(270+(i-2)*100,250))
+            else:
+                text = font.render(str(mesa[i),1,RED)
+                surface.blit(text,(270+(i-1)*100,310))
+        for i in range(len(manoizq)):
+            text = font.render(str(manoizq[i]),1,RED)
+            surface.blit(text,(620,220+i*60))
+        for i in range(len(manoder)):
+            text = font.render(str(manoder[i]),1,RED)
+            surface.blit(text,(30,220+i*60))
         pygame.display.flip()
 
     def tick(self):
