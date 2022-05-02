@@ -95,8 +95,9 @@ class cartas(pygame.sprite.Sprite):#La forma de las cartas siempre es la misma c
 class Display():
     def __init__(self, game):
         self.game = game
+        self.cartas = cartas
         self.all_sprites = pygame.sprite.Group()
-        self.paddle_group = pygame.sprite.Group()
+        self.all_sprites.add(self.cartas)
         self.screen = pygame.display.set_mode(SIZE)
         self.clock =  pygame.time.Clock()  #FPS
         self.background = pygame.image.load('background.jpg')
