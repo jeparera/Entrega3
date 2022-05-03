@@ -50,7 +50,7 @@ class Game():
         self.score = [0,0]
         self.mesa = []
         self.running = True
-    
+        self.bar = 30
     def get_player(self, side):
         return self.players[side]
     
@@ -68,7 +68,7 @@ class Game():
         self.mesa = gameinfo['mesa']
         self.players[0].mano = gameinfo['mano_player1']
         self.players[1].mano = gameinfo['mano_player2']
-
+        self.bar = gameinfo['baraja']
     def is_running(self):
         return self.running
 
@@ -167,6 +167,9 @@ class Display():
         for i in range(len(manoder)):
             text = font.render(str(manoder[i]),1,RED)
             self.screen.blit(text,(15,220+i*60))
+        font = pygame.font.Font(None, 70)
+        text = font.render(str(self.game.bar),1,WHITE)
+        self.screen.blit(text,(345,15))
         pygame.display.flip()
 
     def tick(self):
@@ -212,12 +215,9 @@ def main(ip_address,port):
                                 display.refresh()
                                 display.tick()
                                 events = display.analyze_events(side)
-                            print('2')
                         elif new != []:
-                            print('3')
                             events += new
-                            print(events)
-                    print('si')    
+                            print(events)  
                 conn.send(events)
                 for ev in events:
                     if ev == 'quit':
